@@ -49,14 +49,21 @@ class Dataset(utils.Dataset):
         self._add_images(annotations_org, image_ids_org, dataset_org)
 
     def _add_images(self, annotations, image_ids, dataset_dir):
-        augmentation = iaa.SomeOf((0, 2), [
-            iaa.Fliplr(0.5),
-            iaa.Flipud(0.5),
-            iaa.OneOf([iaa.Affine(rotate=90),
-                       iaa.Affine(rotate=180),
-                       iaa.Affine(rotate=270)]),
+        augmentation = iaa.SomeOf((0, 4), [
+            iaa.CropAndPad(percent=(0, 20)),
+            iaa.Fliplr(p=(0.1, 0.5)),
+            iaa.Grayscale((0.1, 1.0)),
+            iaa.CoarseDropout(p=(0.02, 0.1)),
+            iaa.Dropout(p=0.10),
+            iaa.CropAndPad(5),
+            iaa.OneOf([iaa.Affine(rotate=48),
+                       iaa.Affine(rotate=-45),
+                       ]
+                      ),
+            iaa.Scale((0.5, 1.5)),
+            iaa.Affine(translate_percent=(0.05, 0.15)),
             iaa.Multiply((0.8, 1.5)),
-            iaa.GaussianBlur(sigma=(0.0, 5.0))
+            iaa.GaussianBlur(sigma=(0.0, 5.0)),
         ])
 
         for item in annotations:
