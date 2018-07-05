@@ -4,10 +4,11 @@ from Mask_RCNN.mrcnn.config import Config
 
 class TrainerConfig(Config):
     NAME = "waldo"
-    IMAGES_PER_GPU = 2
+    IMAGES_PER_GPU = 6
     NUM_CLASSES = 2
     STEPS_PER_EPOCH = 100
-    DETECTION_MIN_CONFIDENCE = 0.9
+    DETECTION_MIN_CONFIDENCE = 0.5
+    BACKBONE = "resnet50"
 
     WEIGHT_PATH = os.path.join("models", "mask_rcnn_coco.h5")
     MODEL_PATH = os.path.join("models", "logs")
@@ -17,6 +18,7 @@ class TrainerConfig(Config):
     IMAGE_MIN_SCALE = 2.0
     # RESULTS_DIR = os.path.join("results", "waldo")
     DATA_DIR = "ImageSet"
+    DETECTION_MAX_INSTANCES = 2
 
 
 class FinderConfig(TrainerConfig):

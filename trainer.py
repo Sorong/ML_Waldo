@@ -5,6 +5,7 @@ from Mask_RCNN.mrcnn.model import MaskRCNN
 from Mask_RCNN.mrcnn import utils
 import skimage.draw
 import numpy as np
+from imgaug import augmenters as iaa
 
 from config import TrainerConfig
 
@@ -48,6 +49,16 @@ class Dataset(utils.Dataset):
         self._add_images(annotations_org, image_ids_org, dataset_org)
 
     def _add_images(self, annotations, image_ids, dataset_dir):
+        augmentation = iaa.SomeOf((0, 2), [
+            iaa.Fliplr(0.5),
+            iaa.Flipud(0.5),
+            iaa.OneOf([iaa.Affine(rotate=90),
+                       iaa.Affine(rotate=180),
+                       iaa.Affine(rotate=270)]),
+            iaa.Multiply((0.8, 1.5)),
+            iaa.GaussianBlur(sigma=(0.0, 5.0))
+        ])
+
         for item in annotations:
             if not item['filename'] in image_ids:
                 continue
