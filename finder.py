@@ -13,14 +13,14 @@ class WaldoFinder:
         self.config = configuration
         self.weights_path = weights
 
-    def find(self, imgpath):
+    def find(self, imgpath, outputname):
         self.config.display()
         model = MaskRCNN(mode="inference", config=self.config,
                          model_dir=self.config.MODEL_PATH)
         print("weights_path: ", self.weights_path)
         model.load_weights(self.weights_path, by_name=True)
 
-        image = skimage.io.imread(imgpath)
+        image = skimage.io.imread(imgpath + ".jpg")
         masks = model.detect([image], verbose=1)[0]["masks"]
 
         print("Masks:", masks)
@@ -31,6 +31,6 @@ class WaldoFinder:
         if mask_filter.shape[0] > 0:
             waldo = np.where(mask_filter, image, gray).astype(np.uint8)
             img = Image.fromarray(waldo, 'RGB')
-            img.save("out.jpg")
+            img.save(outputname + ".jpg")
         else:
             print("Can't find Waldo. Hmm..")

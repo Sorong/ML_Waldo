@@ -4,7 +4,7 @@ from Mask_RCNN.mrcnn.config import Config
 
 class TrainerConfig(Config):
     NAME = "waldo"
-    IMAGES_PER_GPU = 6
+    IMAGES_PER_GPU = 4
     NUM_CLASSES = 2
     STEPS_PER_EPOCH = 100
     DETECTION_MIN_CONFIDENCE = 0.5

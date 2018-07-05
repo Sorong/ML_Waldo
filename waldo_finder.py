@@ -22,4 +22,5 @@ if __name__ == '__main__':
     elif args.command == "evaluate":
         if args.model:
             f = WaldoFinder(os.getcwd() + args.model)
-            f.find("test.jpg")
+            for i in range(1, 20):
+                f.find(str(i) + ".jpg", "out" + str(i))
