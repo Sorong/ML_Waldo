@@ -27,14 +27,14 @@ class TrainerConfig(Config):
 
 class Dataset(utils.Dataset):
     VAL_IMAGE_IDS = [
-        "1_1_1.jpg",
-        "2_0_1.jpg",
-        "2_1_0.jpg",
-        "2_1_0.jpg",
-        "4_0_2.jpg",
-        "4_0_3.jpg",
-        "5_0_1.jpg",
-        "5_1_0.jpg"
+        "1_2_3.jpg",
+        "2_3_1.jpg",
+        "4_1_5.jpg",
+        "5_1_2.jpg",
+        "6_7_0.jpg",
+        "9_0_5.jpg",
+        "10_7_2.jpg",
+        "19_0_3.jpg"
     ]
 
     def __init__(self, data_dir):
@@ -84,7 +84,7 @@ class Dataset(utils.Dataset):
     def image_reference(self, image_id):
         info = self.image_info[image_id]
         if info["source"] == "waldo":
-            return info["id"]
+            return info["path"]
         else:
             super(self.__class__, self).image_reference(image_id)
 
