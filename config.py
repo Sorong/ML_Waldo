@@ -11,9 +11,9 @@ class TrainerConfig(Config):
 
     WEIGHT_PATH = os.path.join("models", "mask_rcnn_coco.h5")
     MODEL_PATH = os.path.join("models", "logs")
-    IMAGE_RESIZE_MODE = "square"
-    IMAGE_MIN_DIM = 256
-    IMAGE_MAX_DIM = 256
+    IMAGE_RESIZE_MODE = "crop"
+    IMAGE_MIN_DIM = 512
+    IMAGE_MAX_DIM = 512
     IMAGE_MIN_SCALE = 2.0
     # RESULTS_DIR = os.path.join("results", "waldo")
     DATA_DIR = "ImageSet"

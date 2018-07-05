@@ -10,7 +10,7 @@ from config import TrainerConfig
 
 
 class Dataset(utils.Dataset):
-    VAL_IMAGE_IDS = [
+    VAL_IMAGE_IDS_128 = [
         "1_2_3.jpg",
         "2_3_1.jpg",
         "4_1_5.jpg",
@@ -20,6 +20,10 @@ class Dataset(utils.Dataset):
         "10_7_2.jpg",
         "19_0_3.jpg"
     ]
+    VAL_IMAGE = [
+        "3.jpg", "7.jpg", "11.jpg", "13.jpg", "17.jpg"
+    ]
+    VAL_EVAL = ["17.jpg", "18.jpg", "19.jpg", "20.jpg"]
 
     def __init__(self, data_dir):
         self.root_dir = os.path.join(os.getcwd(), data_dir)
@@ -28,13 +32,22 @@ class Dataset(utils.Dataset):
     def load(self, subset):
         self.add_class("waldo", 1, "waldo")
         dataset_dir = os.path.join(self.root_dir, "128", "waldo")
+        dataset_org = os.path.join(self.root_dir, "original-images")
         if subset == "train":
             image_ids = next(os.walk(dataset_dir))[2]
-            image_ids = list(set(image_ids) - set(self.VAL_IMAGE_IDS))
+            image_ids = list(set(image_ids) - set(self.VAL_IMAGE_IDS_128))
+            image_ids_org = next(os.walk(dataset_org))[2]
+            image_ids_org = list(set(image_ids_org) - set(self.VAL_IMAGE) - set(self.VAL_EVAL))
         else:
-            image_ids = self.VAL_IMAGE_IDS
+            image_ids = self.VAL_IMAGE_IDS_128
+            image_ids_org = self.VAL_IMAGE
         annotations = list(json.load(open(os.path.join(os.getcwd(), "annotations", "128waldo.json"))).values())
+        annotations_org = list(
+            json.load(open(os.path.join(os.getcwd(), "annotations", "original_images.json"))).values())
+        self._add_images(annotations, image_ids, dataset_dir)
+        self._add_images(annotations_org, image_ids_org, dataset_org)
 
+    def _add_images(self, annotations, image_ids, dataset_dir):
         for item in annotations:
             if not item['filename'] in image_ids:
                 continue
