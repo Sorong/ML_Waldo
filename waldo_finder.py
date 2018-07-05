@@ -1,5 +1,7 @@
 import argparse
+import os
 
+from finder import WaldoFinder
 from trainer import Trainer
 
 if __name__ == '__main__':
@@ -17,4 +19,7 @@ if __name__ == '__main__':
     if args.command == "train":
         t = Trainer()
         t.train()
-
+    elif args.command == "evaluate":
+        if args.model:
+            f = WaldoFinder(os.getcwd() + args.model)
+            f.find("test.jpg")
