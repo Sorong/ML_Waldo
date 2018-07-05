@@ -1,39 +1,92 @@
 import os
+import json
 
 from Mask_RCNN.mrcnn.model import MaskRCNN
 from Mask_RCNN.mrcnn.config import Config
 from Mask_RCNN.mrcnn import utils
+import skimage.draw
+import numpy as np
 
 
 class TrainerConfig(Config):
     NAME = "waldo"
-    IMAGES_PER_GPU = 4
+    IMAGES_PER_GPU = 2
     NUM_CLASSES = 2
     STEPS_PER_EPOCH = 100
     DETECTION_MIN_CONFIDENCE = 0.9
+
     WEIGHT_PATH = os.path.join("models", "mask_rcnn_coco.h5")
     MODEL_PATH = os.path.join("models", "logs")
+    IMAGE_RESIZE_MODE = "square"
+    IMAGE_MIN_DIM = 256
+    IMAGE_MAX_DIM = 256
+    IMAGE_MIN_SCALE = 2.0
+    # RESULTS_DIR = os.path.join("results", "waldo")
     DATA_DIR = "ImageSet"
 
 
 class Dataset(utils.Dataset):
+    VAL_IMAGE_IDS = [
+        "1_1_1.jpg",
+        "2_0_1.jpg",
+        "2_1_0.jpg",
+        "2_1_0.jpg",
+        "4_0_2.jpg",
+        "4_0_3.jpg",
+        "5_0_1.jpg",
+        "5_1_0.jpg"
+    ]
+
     def __init__(self, data_dir):
         self.root_dir = os.path.join(os.getcwd(), data_dir)
         super(Dataset, self).__init__()
 
-    def load(self, path):
+    def load(self, subset):
         self.add_class("waldo", 1, "waldo")
-        if path == "waldo":
-            image_path = os.path.join(self.root_dir, "128", path)
+        dataset_dir = os.path.join(self.root_dir, "128", "waldo")
+        if subset == "train":
+            image_ids = next(os.walk(dataset_dir))[2]
+            image_ids = list(set(image_ids) - set(self.VAL_IMAGE_IDS))
         else:
-            image_path = os.path.join(self.root_dir, path)
-        image_ids = next(os.walk(image_path))[2]
+            image_ids = self.VAL_IMAGE_IDS
+        annotations = list(json.load(open(os.path.join(os.getcwd(), "annotations", "128waldo.json"))).values())
 
-        for image_id in image_ids:
+        for item in annotations:
+            if not item['filename'] in image_ids:
+                continue
+            polygons = [region['shape_attributes'] for region in item['regions']]
+
+            image_path = os.path.join(dataset_dir, item['filename'])
+            image = skimage.io.imread(image_path)
+            height, width = image.shape[:2]
+
             self.add_image(
                 "waldo",
-                image_id=image_id,
-                path=os.path.join(image_path, image_id))
+                image_id=item['filename'],
+                path=image_path,
+                width=width, height=height,
+                polygons=polygons)
+
+    def load_mask(self, image_id):
+        image_info = self.image_info[image_id]
+        if image_info["source"] != "waldo":
+            return super(self.__class__, self).load_mask(image_id)
+
+        info = self.image_info[image_id]
+        mask = np.zeros([info["height"], info["width"], len(info["polygons"])],
+                        dtype=np.uint8)
+        for i, p in enumerate(info["polygons"]):
+            rr, cc = skimage.draw.polygon(p['all_points_y'], p['all_points_x'])
+            mask[rr, cc, i] = 1
+
+        return mask.astype(np.bool), np.ones([mask.shape[-1]], dtype=np.int32)
+
+    def image_reference(self, image_id):
+        info = self.image_info[image_id]
+        if info["source"] == "waldo":
+            return info["id"]
+        else:
+            super(self.__class__, self).image_reference(image_id)
 
 
 class Trainer:
@@ -49,14 +102,14 @@ class Trainer:
 
     def train(self):
         dataset_train = Dataset(self.config.DATA_DIR)
-        dataset_train.load("waldo")
+        dataset_train.load("train")
         dataset_train.prepare()
 
         dataset_val = Dataset(self.config.DATA_DIR)
-        dataset_val.load("original-images")
+        dataset_val.load("val")
         dataset_val.prepare()
 
         self.model.train(dataset_train, dataset_val,
                          learning_rate=self.config.LEARNING_RATE,
-                         epochs=10,
+                         epochs=30,
                          layers='heads')
