@@ -31,6 +31,6 @@ class WaldoFinder:
         if mask_filter.shape[0] > 0:
             waldo = np.where(mask_filter, image, gray).astype(np.uint8)
             img = Image.fromarray(waldo, 'RGB')
-            img.show()
+            img.save("out.jpg")
         else:
             print("Can't find Waldo. Hmm..")
