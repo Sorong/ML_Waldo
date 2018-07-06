@@ -2,7 +2,7 @@ import os
 import json
 
 from Mask_RCNN.mrcnn.model import MaskRCNN
-from Mask_RCNN.mrcnn import utils
+from Mask_RCNN.mrcnn import utils, visualize
 import skimage.draw
 import numpy as np
 from imgaug import augmenters as iaa
@@ -45,15 +45,15 @@ class Dataset(utils.Dataset):
         annotations = list(json.load(open(os.path.join(os.getcwd(), "annotations", "128waldo.json"))).values())
         annotations_org = list(
             json.load(open(os.path.join(os.getcwd(), "annotations", "original_images.json"))).values())
-        self._add_images(annotations, image_ids, dataset_dir)
+        # self._add_images(annotations, image_ids, dataset_dir)
         self._add_images(annotations_org, image_ids_org, dataset_org)
 
     def _add_images(self, annotations, image_ids, dataset_dir):
-        augmentation = iaa.SomeOf((0, 4), [
+        augmentation = iaa.SomeOf((0, 3), [
             iaa.CropAndPad(percent=(0, 20)),
-            iaa.Fliplr(p=(0.1, 0.5)),
+            iaa.Fliplr(0.2),
             iaa.Grayscale((0.1, 1.0)),
-            iaa.CoarseDropout(p=(0.02, 0.1)),
+            iaa.CoarseDropout(size_percent=(0.02, 0.1)),
             iaa.Dropout(p=0.10),
             iaa.CropAndPad(5),
             iaa.OneOf([iaa.Affine(rotate=48),
@@ -74,7 +74,6 @@ class Dataset(utils.Dataset):
             image_path = os.path.join(dataset_dir, item['filename'])
             image = skimage.io.imread(image_path)
             height, width = image.shape[:2]
-
             self.add_image(
                 "waldo",
                 image_id=item['filename'],
@@ -94,6 +93,8 @@ class Dataset(utils.Dataset):
             rr, cc = skimage.draw.polygon(p['all_points_y'], p['all_points_x'])
             mask[rr, cc, i] = 1
 
+        visualize.display_top_masks(self.load_image(image_id), mask, np.ones([mask.shape[-1]], dtype=np.int32),
+                                    self.class_names, limit=1)
         return mask.astype(np.bool), np.ones([mask.shape[-1]], dtype=np.int32)
 
     def image_reference(self, image_id):
