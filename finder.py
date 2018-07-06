@@ -20,7 +20,7 @@ class WaldoFinder:
         print("weights_path: ", self.weights_path)
         model.load_weights(self.weights_path, by_name=True)
 
-        image = skimage.io.imread(imgpath + ".jpg")
+        image = skimage.io.imread(imgpath)
         masks = model.detect([image], verbose=1)[0]["masks"]
 
         print("Masks:", masks)

@@ -51,9 +51,9 @@ class Dataset(utils.Dataset):
     def _add_images(self, annotations, image_ids, dataset_dir):
         augmentation = iaa.SomeOf((0, 4), [
             iaa.CropAndPad(percent=(0, 20)),
-            iaa.Fliplr(p=(0.1, 0.5)),
+            iaa.Fliplr(p=0.2),
             iaa.Grayscale((0.1, 1.0)),
-            iaa.CoarseDropout(p=(0.02, 0.1)),
+            iaa.CoarseDropout(size_percent=(0.02, 0.1)),
             iaa.Dropout(p=0.10),
             iaa.CropAndPad(5),
             iaa.OneOf([iaa.Affine(rotate=48),
