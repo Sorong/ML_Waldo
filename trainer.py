@@ -21,10 +21,15 @@ class Dataset(utils.Dataset):
         "10_7_2.jpg",
         "19_0_3.jpg"
     ]
+    # VAL_IMAGE = [
+    #    "3.jpg", "7.jpg", "11.jpg", "13.jpg", "17.jpg"
+    # ]
     VAL_IMAGE = [
-        "3.jpg", "7.jpg", "11.jpg", "13.jpg", "17.jpg"
+        "1.jpg", "17.jpg", "18.jpg", "19.jpg"
     ]
-    VAL_EVAL = ["17.jpg", "18.jpg", "19.jpg", "20.jpg"]
+    ##VAL_EVAL = ["17.jpg", "18.jpg", "19.jpg"]
+    VAL_EVAL = ["6.jpg", "7.jpg", "8.jpg", "9.jpg", "10.jpg",
+                "11.jpg", "12.jpg", "13.jpg", "14.jpg", "15.jpg", "16.jpg"]
 
     def __init__(self, data_dir):
         self.root_dir = os.path.join(os.getcwd(), data_dir)
@@ -127,5 +132,5 @@ class Trainer:
 
         self.model.train(dataset_train, dataset_val,
                          learning_rate=self.config.LEARNING_RATE,
-                         epochs=30,
+                         epochs=10,
                          layers='heads')

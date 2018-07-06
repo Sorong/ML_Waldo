@@ -12,9 +12,9 @@ class WaldoFinder:
     def __init__(self, weights, configuration=FinderConfig()):
         self.config = configuration
         self.weights_path = weights
+        self.config.display()
 
     def find(self, imgpath, outputname):
-        self.config.display()
         model = MaskRCNN(mode="inference", config=self.config,
                          model_dir=self.config.MODEL_PATH)
         print("weights_path: ", self.weights_path)
