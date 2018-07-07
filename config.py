@@ -10,8 +10,8 @@ class TrainerConfig(Config):
     DETECTION_MIN_CONFIDENCE = 0.5
     BACKBONE = "resnet50"
 
-    # WEIGHT_PATH = os.path.join("models", "mask_rcnn_coco.h5")
-    WEIGHT_PATH = os.path.join("models", "mask_rcnn_waldo_0028.h5")
+    WEIGHT_PATH = os.path.join("models", "mask_rcnn_coco.h5")
+    # WEIGHT_PATH = os.path.join("models", "mask_rcnn_waldo_0028.h5")
     MODEL_PATH = os.path.join("models", "logs")
 
     # Input image resizing
