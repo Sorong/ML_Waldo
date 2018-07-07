@@ -27,11 +27,13 @@ class Dataset(utils.Dataset):
     # VAL_IMAGE = [
     #    "1.jpg", "17.jpg", "18.jpg", "19.jpg"
     # ]
-    VAL_IMAGE = ["4.jpg", "10.jpg"]
+    #VAL_IMAGE = ["4.jpg", "10.jpg"]
+    VAL_IMAGE = ["3.jpg", "4.jpg", "18.jpg", "19.jpg"]
     ##VAL_EVAL = ["17.jpg", "18.jpg", "19.jpg"]
     # VAL_EVAL = ["6.jpg", "7.jpg", "8.jpg", "9.jpg", "10.jpg",
     #            "11.jpg", "12.jpg", "13.jpg", "14.jpg", "15.jpg", "16.jpg"]
-    VAL_EVAL = ["1.jpg", "2.jpg", "5.jpg", "8.jpg", "9.jpg", "12.jpg", "14.jpg", "15.jpg", "16.jpg"]
+    #VAL_EVAL = ["1.jpg", "2.jpg", "5.jpg", "8.jpg", "9.jpg", "12.jpg", "14.jpg", "15.jpg", "16.jpg"]
+    VAL_EVAL = ["9.jpg", "14.jpg", "15.jpg"]
 
     def __init__(self, data_dir):
         self.root_dir = os.path.join(os.getcwd(), data_dir)
@@ -56,17 +58,14 @@ class Dataset(utils.Dataset):
         self._add_images(annotations_org, image_ids_org, dataset_org)
 
     def _add_images(self, annotations, image_ids, dataset_dir):
-        augmentation = iaa.SomeOf((0, 3), [
+        augmentation = iaa.SomeOf((1, 4), [
             iaa.CropAndPad(percent=(0, 20)),
             iaa.Fliplr(p=0.2),
             iaa.Grayscale((0.1, 1.0)),
             iaa.CoarseDropout(size_percent=(0.02, 0.1)),
             iaa.Dropout(p=0.10),
             iaa.CropAndPad(5),
-            iaa.OneOf([iaa.Affine(rotate=48),
-                       iaa.Affine(rotate=-45),
-                       ]
-                      ),
+            iaa.Affine(rotate=(-45, 45)),
             iaa.Scale((0.5, 1.5)),
             iaa.Affine(translate_percent=(0.05, 0.15)),
             iaa.Multiply((0.8, 1.5)),
