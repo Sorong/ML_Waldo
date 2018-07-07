@@ -1,3 +1,4 @@
+import os
 import sys
 
 import skimage
@@ -21,16 +22,15 @@ class WaldoFinder:
         model.load_weights(self.weights_path, by_name=True)
 
         image = skimage.io.imread(imgpath)
-        masks = model.detect([image], verbose=1)[0]["masks"]
-
-        print("Masks:", masks)
+        masks = model.detect([image], verbose=1)[0]
 
         gray = skimage.color.gray2rgb(skimage.color.rgb2gray(image)) * 255
-        mask_filter = (np.sum(masks, -1, keepdims=True) >= 1)
+        mask_filter = (np.sum(masks["masks"], -1, keepdims=True) >= 1)
 
         if mask_filter.shape[0] > 0:
             waldo = np.where(mask_filter, image, gray).astype(np.uint8)
             img = Image.fromarray(waldo, 'RGB')
-            img.save(outputname + ".jpg")
+            outpath = os.path.join(os.getcwd(), os.path.basename(self.weights_path)[:-3])
+            img.save(os.path.join(outpath, outputname + ".jpg"))
         else:
             print("Can't find Waldo. Hmm..")
