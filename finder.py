@@ -31,6 +31,8 @@ class WaldoFinder:
             waldo = np.where(mask_filter, image, gray).astype(np.uint8)
             img = Image.fromarray(waldo, 'RGB')
             outpath = os.path.join(os.getcwd(), os.path.basename(self.weights_path)[:-3])
+            if not os.path.exists(outpath):
+                os.makedirs(outpath)
             img.save(os.path.join(outpath, outputname + ".jpg"))
         else:
             print("Can't find Waldo. Hmm..")
