@@ -26,7 +26,7 @@ class Trainer:
             iaa.Dropout(p=0.10),
             iaa.CropAndPad(5),
             iaa.Affine(rotate=(-45, 45)),
-            iaa.Scale((0.5, 1.5)),
+            iaa.Affine(scale=(0.5, 1.5)),
             iaa.Affine(translate_percent=(0.05, 0.15)),
             iaa.Multiply((0.8, 1.5)),
             iaa.GaussianBlur(sigma=(0.0, 5.0)),
