@@ -4,7 +4,7 @@ from Mask_RCNN.mrcnn.config import Config
 
 class TrainerConfig(Config):
     NAME = "waldo"
-    IMAGES_PER_GPU = 2
+    IMAGES_PER_GPU = 3
     NUM_CLASSES = 2
     STEPS_PER_EPOCH = 100
     DETECTION_MIN_CONFIDENCE = 0.5
@@ -34,8 +34,9 @@ class TrainerConfig(Config):
     #         on IMAGE_MIN_DIM and IMAGE_MIN_SCALE, then picks a random crop of
     #         size IMAGE_MIN_DIM x IMAGE_MIN_DIM. Can be used in training only.
     #         IMAGE_MAX_DIM is not used in this mode.
-    IMAGE_RESIZE_MODE = "pad64"
-    IMAGE_MIN_DIM = None
+    IMAGE_RESIZE_MODE = "square"
+    IMAGE_MIN_DIM = 800
+    IMAGE_MAX_DIM = 1024
     # IMAGE_MIN_DIM = 512
     # IMAGE_MAX_DIM = 512
     # IMAGE_MIN_SCALE = 2.0

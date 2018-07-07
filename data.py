@@ -1,6 +1,5 @@
 import os
 import json
-from imgaug import augmenters as iaa
 import skimage.draw
 import numpy as np
 
@@ -37,14 +36,14 @@ class Dataset(utils.Dataset):
 
     def load(self, subset):
         self.add_class("waldo", 1, "waldo")
-        _64 = self._load64_images(subset)
-        _128 = self._load128_images(subset)
-        _256 = self._load256_images(subset)
-        # _org = self._loadorg_images(subset)
-        self._add_images(_64[0], _64[1], _64[2])
-        self._add_images(_128[0], _128[1], _128[2])
-        self._add_images(_256[0], _256[1], _256[2])
-        # self._add_images(_org[0], _org[1], _org[2])
+        #_64 = self._load64_images(subset)
+        #_128 = self._load128_images(subset)
+        #_256 = self._load256_images(subset)
+        _org = self._loadorg_images(subset)
+        #self._add_images(_64[0], _64[1], _64[2])
+        #self._add_images(_128[0], _128[1], _128[2])
+        #self._add_images(_256[0], _256[1], _256[2])
+        self._add_images(_org[0], _org[1], _org[2])
 
     def _load64_images(self, subset):
         dataset_dir = os.path.join(self.root_dir, "64", "waldo")
@@ -83,25 +82,10 @@ class Dataset(utils.Dataset):
             image_ids = list(set(image_ids) - set(self.VAL_IMAGE_ORG) - set(self.EVAL_IMAGE_ORG))
         else:
             image_ids = self.VAL_IMAGE_ORG
-        annotations = list(
-            json.load(open(os.path.join(os.getcwd(), "annotations", "original_images.json"))).values())
+        annotations = list(json.load(open(os.path.join(os.getcwd(), "annotations", "original_images.json"))).values())
         return annotations, image_ids, dataset_dir
 
     def _add_images(self, annotations, image_ids, dataset_dir):
-        augmentation = iaa.SomeOf((1, 4), [
-            iaa.CropAndPad(percent=(0, 20)),
-            iaa.Fliplr(p=0.2),
-            iaa.Grayscale((0.1, 1.0)),
-            iaa.CoarseDropout(size_percent=(0.02, 0.1)),
-            iaa.Dropout(p=0.10),
-            iaa.CropAndPad(5),
-            iaa.Affine(rotate=(-45, 45)),
-            iaa.Scale((0.5, 1.5)),
-            iaa.Affine(translate_percent=(0.05, 0.15)),
-            iaa.Multiply((0.8, 1.5)),
-            iaa.GaussianBlur(sigma=(0.0, 5.0)),
-        ])
-
         for item in annotations:
             if not item['filename'] in image_ids:
                 continue
