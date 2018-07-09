@@ -36,13 +36,13 @@ class Dataset(utils.Dataset):
 
     def load(self, subset):
         self.add_class("waldo", 1, "waldo")
-        #_64 = self._load64_images(subset)
-        #_128 = self._load128_images(subset)
-        #_256 = self._load256_images(subset)
+        # _64 = self._load64_images(subset)
+        # _128 = self._load128_images(subset)
+        # _256 = self._load256_images(subset)
         _org = self._loadorg_images(subset)
-        #self._add_images(_64[0], _64[1], _64[2])
-        #self._add_images(_128[0], _128[1], _128[2])
-        #self._add_images(_256[0], _256[1], _256[2])
+        # self._add_images(_64[0], _64[1], _64[2])
+        # self._add_images(_128[0], _128[1], _128[2])
+        # self._add_images(_256[0], _256[1], _256[2])
         self._add_images(_org[0], _org[1], _org[2])
 
     def _load64_images(self, subset):
@@ -50,6 +50,8 @@ class Dataset(utils.Dataset):
         if subset == "train":
             image_ids = next(os.walk(dataset_dir))[2]
             image_ids = list(set(image_ids) - set(self.VAL_IMAGE_64) - set(self.NO_WALDO_64))
+        elif subset == "all":
+            image_ids = next(os.walk(dataset_dir))[2]
         else:
             image_ids = self.VAL_IMAGE_64
         annotations = list(json.load(open(os.path.join(os.getcwd(), "annotations", "64waldo.json"))).values())
@@ -60,6 +62,8 @@ class Dataset(utils.Dataset):
         if subset == "train":
             image_ids = next(os.walk(dataset_dir))[2]
             image_ids = list(set(image_ids) - set(self.VAL_IMAGE_128) - set(self.NO_WALDO_128))
+        elif subset == "all":
+            image_ids = next(os.walk(dataset_dir))[2]
         else:
             image_ids = self.VAL_IMAGE_128
         annotations = list(json.load(open(os.path.join(os.getcwd(), "annotations", "128waldo.json"))).values())
@@ -70,6 +74,8 @@ class Dataset(utils.Dataset):
         if subset == "train":
             image_ids = next(os.walk(dataset_dir))[2]
             image_ids = list(set(image_ids) - set(self.VAL_IMAGE_256) - set(self.NO_WALDO_256))
+        elif subset == "all":
+            image_ids = next(os.walk(dataset_dir))[2]
         else:
             image_ids = self.VAL_IMAGE_256
         annotations = list(json.load(open(os.path.join(os.getcwd(), "annotations", "256waldo.json"))).values())
@@ -80,6 +86,8 @@ class Dataset(utils.Dataset):
         if subset == "train":
             image_ids = next(os.walk(dataset_dir))[2]
             image_ids = list(set(image_ids) - set(self.VAL_IMAGE_ORG) - set(self.EVAL_IMAGE_ORG))
+        elif subset == "all":
+            image_ids = next(os.walk(dataset_dir))[2]
         else:
             image_ids = self.VAL_IMAGE_ORG
         annotations = list(json.load(open(os.path.join(os.getcwd(), "annotations", "original_images.json"))).values())
